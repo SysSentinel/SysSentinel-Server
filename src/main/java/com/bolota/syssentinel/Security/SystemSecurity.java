@@ -16,14 +16,14 @@ import java.util.Scanner;
 
 public class SystemSecurity {
 
-    private static final String filePath = "SysSentinelHost/src/main/java/com/bolota/syssentinel/Security/authKey.config";
+    private static final String filePath = "SysSentinelServer/src/main/java/com/bolota/syssentinel/Security/authKey.config";
 
     public static boolean isAuthFilePresent(){
         File file = new File(filePath);
         return file.exists();
     }
 
-    public static void registerAuthKey() {
+    public static void registerAuthKey() throws IOException {
         Scanner scanner = new Scanner(System.in);
         File file = new File(filePath);
         try (FileWriter fw= new FileWriter(file)){

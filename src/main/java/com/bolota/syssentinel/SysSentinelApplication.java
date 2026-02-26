@@ -3,6 +3,7 @@ package com.bolota.syssentinel;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -18,13 +19,13 @@ public class SysSentinelApplication {
             return "127.0.0.1";
         }
     }
-    public static void assertAuthKey(){
+    public static void assertAuthKey() throws IOException {
         if (!isAuthFilePresent()){
             registerAuthKey();
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println(getLocalIpFast()+":"+"8080");
         assertAuthKey();
         SpringApplication.run(SysSentinelApplication.class, args);
