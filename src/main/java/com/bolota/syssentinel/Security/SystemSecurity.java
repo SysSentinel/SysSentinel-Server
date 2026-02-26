@@ -28,7 +28,7 @@ public class SystemSecurity {
         File file = new File(filePath);
         try (FileWriter fw= new FileWriter(file)){
             System.out.println("Enter the Auth Key:");
-            fw.write("AuthKey="+scanner.nextLine().trim());
+            fw.write("AuthKey="+scanner.nextLine().trim()+"\n");
             System.out.println("Enter the Register Key:");
             fw.write("RegisterKey="+scanner.nextLine().trim());
         } catch (IOException e) {
