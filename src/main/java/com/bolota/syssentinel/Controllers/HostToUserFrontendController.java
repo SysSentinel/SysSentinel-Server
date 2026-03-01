@@ -35,11 +35,17 @@ public class HostToUserFrontendController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginHandler(@RequestParam HashMap<String,String> loginInfo){
+        System.out.println("login: " + loginInfo);
         if (loginInfo==null) return ResponseEntity.badRequest().build();
         if (loginInfo.get("login") == null || loginInfo.get("password") == null) return ResponseEntity.badRequest().build();
         if (!uer.existsByLogin(loginInfo.get("login"))) return ResponseEntity.notFound().build();
         UserEntity ue = uer.getUserEntityByLogin(loginInfo.get("login"));
-        if (!passwordEncoder.matches(loginInfo.get("password"),ue.getPasswordHash())) return ResponseEntity.status(401).build();
+        System.out.println("Double PRINT: "+ ue.getPasswordHash() + "\nnga\n" + passwordEncoder.matches(loginInfo.get("password"),ue.getPasswordHash()));
+        System.out.println("teste 4");
+        System.out.println("db hash: " + ue.getPasswordHash());
+        System.out.println("matches(db): " + passwordEncoder.matches(loginInfo.get("password").trim(), ue.getPasswordHash()));
+
+        if (!passwordEncoder.matches(loginInfo.get("password").trim(),ue.getPasswordHash())) return ResponseEntity.status(401).build();
         return ResponseEntity.ok(issueLoginToken(loginInfo.get("login")));
     }
 
@@ -49,8 +55,9 @@ public class HostToUserFrontendController {
         if (loginInfo.get("login") == null || loginInfo.get("password") == null) return ResponseEntity.badRequest().build();
         if (loginInfo.get("login").trim().isEmpty()||loginInfo.get("password").trim().isEmpty()) return ResponseEntity.badRequest().build();
         if (uer.existsByLogin(loginInfo.get("login"))) return ResponseEntity.status(409).build();
-        uer.save(new UserEntity(loginInfo.get("login"), passwordEncoder.encode(loginInfo.get("password"))));
-        System.out.println(loginInfo);
+        String psswrd = passwordEncoder.encode(loginInfo.get("password").trim());
+        uer.save(new UserEntity(loginInfo.get("login"), psswrd));
+        System.out.println("register loginfo: "+loginInfo + "           " + psswrd);
         return ResponseEntity.ok(issueLoginToken(loginInfo.get("login")));
     }
     public String issueLoginToken(String login) {

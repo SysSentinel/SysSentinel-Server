@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class SystemSecurity {
 
-    private static final String filePath = "SysSentinelServer/src/main/java/com/bolota/syssentinel/Security/authKey.config";
+    private static final String filePath = "src/main/java/com/bolota/syssentinel/Security/authKey.config";
 
     public static boolean isAuthFilePresent(){
         File file = new File(filePath);
@@ -38,9 +38,7 @@ public class SystemSecurity {
     public static String getAuthKey(){
         File file = new File(filePath);
         try(Scanner scanner = new Scanner(file)) {
-            String nga = scanner.nextLine().substring(8);
-            System.out.println(nga);
-            return nga;
+            return scanner.nextLine().substring(8);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

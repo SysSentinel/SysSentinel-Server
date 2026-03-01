@@ -24,23 +24,14 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String login;
 
-    @Column(nullable = false)
+    @Column(nullable = false,length=60)
     private String passwordHash;
     private ArrayList<String> systemsInPossession;
 
     public UserEntity(String login,String passwordHash){
         this.login = login;
-        this.passwordHash = passwordEncoder().encode(passwordHash);
+        this.passwordHash = passwordHash;
         this.systemsInPossession = new ArrayList<>();
-    }
-    public UserEntity(UserEntity ue){
-        this.id = ue.getId() + 1;
-        this.login = ue.getLogin();
-        this.passwordHash = ue.getPasswordHash();
-        this.systemsInPossession = ue.getSystemsInPossession();
-    }
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
     public void addSystem(String uuid){
         systemsInPossession.add(uuid);

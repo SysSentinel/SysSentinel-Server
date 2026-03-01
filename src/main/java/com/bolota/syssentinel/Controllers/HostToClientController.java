@@ -39,6 +39,7 @@ public class HostToClientController {
 
     @PostMapping(value="/sysinfo", consumes="application/json")
     public ResponseEntity<HashMap> SysEntityHandler(@RequestHeader("JwtToken") String jwttoken,@RequestHeader("RegisterToken") String rgstrtoken, @RequestBody SystemEntity seNew){
+        System.out.println(seNew + "         " + jwttoken + rgstrtoken);
         if(seNew.getUUID().equals("null") && jwttoken.equals("null") && rgstrtoken.equals(getRegisterKey())){
             System.out.println("teste 1");
             String UUID = genUUID();
@@ -78,9 +79,9 @@ public class HostToClientController {
         if (seNew.getUUID().equals(jwtDecoder.decode(jwttoken).getSubject())){
             System.out.println("teste 6");
             if (ser.existsByUUID(seNew.getUUID())){
-                ser.deleteByUUID(seNew.getUUID());
+                //ser.deleteByUUID(seNew.getUUID());
             }
-            ser.save(new SystemEntityDTO(seNew));
+            //ser.save(new SystemEntityDTO(seNew));
             HashMap<String,String> map = new HashMap<>();
             map.put("UUID",seNew.getUUID());
             map.put("token",jwttoken);
