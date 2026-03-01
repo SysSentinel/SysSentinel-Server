@@ -1,10 +1,13 @@
 package com.bolota.syssentinel.Controllers;
 
 import com.bolota.syssentinel.Entities.UserEntities.UserEntity;
+import com.bolota.syssentinel.Resource.SystemEntityResources;
 import com.bolota.syssentinel.Resource.UserEntityResources;
 import org.aspectj.weaver.IClassFileProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +28,9 @@ public class HostToUserFrontendController {
 
     @Autowired
     UserEntityResources uer;
+
+    @Autowired
+    SystemEntityResources ser;
 
     final
     JwtEncoder jwtEncoder;
@@ -71,5 +77,18 @@ public class HostToUserFrontendController {
                 .build();
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         return jwtEncoder.encode(JwtEncoderParameters.from(header,claims)).getTokenValue();
+    }
+    @Modifying
+    @GetMapping("/remove")
+    public ResponseEntity<HashMap> removeUUIDFromUser(@RequestParam ("user") String user, @RequestParam ("systemUUID") String uuid){
+        UserEntity ue = uer.getUserEntityByLogin(user);
+        HashMap<String,Boolean> hm = new HashMap<>();
+        if (ser.existsByUUID(uuid) && ue.getSystemsInPossession().contains(uuid)){
+            hm.put("DeleteResult",ue.getSystemsInPossession().remove(uuid));
+            uer.save(ue);
+            return new ResponseEntity<>(hm, HttpStatusCode.valueOf(200));
+        }
+        hm.put("DeleteResult", false);
+        return new ResponseEntity<>(hm, HttpStatusCode.valueOf(404));
     }
 }

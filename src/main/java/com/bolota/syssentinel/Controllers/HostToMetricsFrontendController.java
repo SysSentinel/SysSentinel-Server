@@ -20,12 +20,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.*;
 
@@ -43,6 +45,7 @@ public class HostToMetricsFrontendController {
 
     @Autowired
     UserEntityResources uer;
+    private HandlerMapping resourceHandlerMapping;
 
     @GetMapping("/systems")
     public ResponseEntity<Page<SystemEntityDTO>> sendSystems(@AuthenticationPrincipal Jwt jwt, @RequestHeader("login") String login, @PageableDefault(size = 10) Pageable pageable){
@@ -73,13 +76,6 @@ public class HostToMetricsFrontendController {
         SystemProcessEntity[] arr = new ObjectMapper().readValue(svedto.getSystemProcessEntities(), SystemProcessEntity[].class);
         List<SystemProcessEntity> spel = new ArrayList<>(Arrays.asList(arr));
         String[] sortMethods = sort.split(",");
-        /*
-    private String  name;
-    private int     pid;
-    private double  residentMem; // em MBs
-    private double  virtualMem;  // em GBs
-    private double  cpuLoad;
-    */
         switch (sortMethods[0]){
             case "name":
                 if (sortMethods[1].equals("desc")){
@@ -122,8 +118,6 @@ public class HostToMetricsFrontendController {
                 }
                 break;
         }
-        System.out.println(spel);
-        System.out.println();
         svedto.setSystemProcessEntities(genJSON(spel));
         return ResponseEntity.ok(svedto);
     }
