@@ -44,15 +44,6 @@ ___
 
 * [Frontend servido pelo servidor](#frontend-servido-pelo-servidor)
 * [Swagger / OpenAPI](#swagger--openapi)
-    * `POST /api/user/register`
-    * `GET /api/user/remove`
-* [Tráfego JSON “fim a fim” (como o projeto implementa)](#tráfego-json-fim-a-fim-como-o-projeto-implementa)
-
-  * [Fluxo do Agente (cliente) → Host](#fluxo-do-agente-cliente--host)
-  * [Fluxo do Usuário (frontend) → Host](#fluxo-do-usuário-frontend--host)
-* [Frontend servido pelo servidor](#frontend-servido-pelo-servidor)
-* [Swagger / OpenAPI](#swagger--openapi)
-
 ___
 ## Função
 
