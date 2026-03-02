@@ -1,6 +1,6 @@
-package com.bolota.syssentinel.Entities.DTOs;
+package com.bolota.syssentinel.Entities.SystemEntities;
 
-import com.bolota.syssentinel.Entities.SystemEntities.SystemEntity;
+import com.bolota.syssentinel.Entities.SystemEntitiesDTOs.SystemEntityDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class SystemEntityDTO {
+public class SystemEntityPersistent {
     @Id
     @Column(nullable=false, updatable=false)
     private String UUID;
@@ -22,7 +22,7 @@ public class SystemEntityDTO {
     private String cpu;
     private List<String> gpu;
     private double memRamMax;
-    public SystemEntityDTO(SystemEntity se){
+    public SystemEntityPersistent(SystemEntityDTO se){
         this.UUID       = se.getUUID();
         this.name       = se.getName();
         this.os         = se.getOs();

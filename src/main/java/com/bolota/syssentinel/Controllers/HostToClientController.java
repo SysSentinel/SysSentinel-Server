@@ -1,13 +1,12 @@
 package com.bolota.syssentinel.Controllers;
 
-import com.bolota.syssentinel.Entities.DTOs.SystemEntityDTO;
-import com.bolota.syssentinel.Entities.DTOs.SystemVolatileEntityDTO;
-import com.bolota.syssentinel.Entities.SystemEntities.SystemEntity;
-import com.bolota.syssentinel.Entities.SystemEntities.SystemVolatileEntity;
+import com.bolota.syssentinel.Entities.SystemEntities.SystemEntityPersistent;
+import com.bolota.syssentinel.Entities.SystemEntities.SystemVolatileEntityPersistent;
+import com.bolota.syssentinel.Entities.SystemEntitiesDTOs.SystemEntityDTO;
+import com.bolota.syssentinel.Entities.SystemEntitiesDTOs.SystemVolatileEntityDTO;
 import com.bolota.syssentinel.Resource.SystemEntityResources;
 import com.bolota.syssentinel.Resource.SystemVolatileEntityResources;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatusCode;
@@ -38,14 +37,14 @@ public class HostToClientController {
     JwtDecoder jwtDecoder;
 
     @PostMapping(value="/sysinfo", consumes="application/json")
-    public ResponseEntity<HashMap> SysEntityHandler(@RequestHeader("JwtToken") String jwttoken,@RequestHeader("RegisterToken") String rgstrtoken, @RequestBody SystemEntity seNew){
+    public ResponseEntity<HashMap> SysEntityHandler(@RequestHeader("JwtToken") String jwttoken,@RequestHeader("RegisterToken") String rgstrtoken, @RequestBody SystemEntityDTO seNew){
         if(seNew.getUUID().equals("null") && jwttoken.equals("null") && rgstrtoken.equals(getRegisterKey())){
             String UUID = genUUID();
             HashMap<String,String> map = new HashMap<>();
             map.put("UUID",UUID);
             map.put("token",issueAgentToken(UUID));
             seNew.setUUID(UUID);
-            ser.save(new SystemEntityDTO(seNew));
+            ser.save(new SystemEntityPersistent(seNew));
             return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
         }
         if(!seNew.getUUID().equals("null") && jwttoken.equals("null") && rgstrtoken.equals(getRegisterKey())){
@@ -53,7 +52,7 @@ public class HostToClientController {
                 HashMap<String,String> map = new HashMap<>();
                 map.put("UUID",seNew.getUUID());
                 map.put("token",issueAgentToken(seNew.getUUID()));
-                ser.save(new SystemEntityDTO(seNew));
+                ser.save(new SystemEntityPersistent(seNew));
                 return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
             }
             else {
@@ -74,7 +73,7 @@ public class HostToClientController {
                 HashMap<String,String> map = new HashMap<>();
                 map.put("UUID",seNew.getUUID());
                 map.put("token",jwttoken);
-                ser.save(new SystemEntityDTO(seNew));
+                ser.save(new SystemEntityPersistent(seNew));
                 return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
             }
             else {
@@ -93,7 +92,7 @@ public class HostToClientController {
     @Modifying
     @Transactional
     @PostMapping(value="/sysinfovolatile", consumes="application/json")
-    public ResponseEntity<Void> SysVolatileHandler(@AuthenticationPrincipal Jwt jwt, @RequestBody SystemVolatileEntity sveNew){
+    public ResponseEntity<Void> SysVolatileHandler(@AuthenticationPrincipal Jwt jwt, @RequestBody SystemVolatileEntityDTO sveNew){
         if (jwt == null){
             return ResponseEntity.status(401).build();
         }
@@ -108,10 +107,10 @@ public class HostToClientController {
         }
         if (sver.existsByUUID(sveNew.getUUID())){
             sver.deleteByUUID(sveNew.getUUID());
-            sver.save(new SystemVolatileEntityDTO(sveNew));
+            sver.save(new SystemVolatileEntityPersistent(sveNew));
             return ResponseEntity.status(200).build();
         }
-        sver.save(new SystemVolatileEntityDTO(sveNew));
+        sver.save(new SystemVolatileEntityPersistent(sveNew));
         return ResponseEntity.status(200).build();
     }
     @GetMapping("/updateAuth")

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -46,7 +47,7 @@ public class HostToUserFrontendController {
         UserEntity ue = uer.getUserEntityByLogin(loginInfo.get("login"));
         if (!passwordEncoder.matches(loginInfo.get("password").trim(),ue.getPasswordHash())) return ResponseEntity.status(401).build();
 
-        return ResponseEntity.ok(issueLoginToken(loginInfo.get("login")));
+        return ResponseEntity.ok(issueLoginToken(ue.getLogin()));
     }
 
     @PostMapping("/register")
@@ -61,12 +62,15 @@ public class HostToUserFrontendController {
 
         String psswrd = passwordEncoder.encode(loginInfo.get("password").trim());
         uer.save(new UserEntity(loginInfo.get("login"), psswrd));
-        System.out.println("register loginfo: "+loginInfo + "           " + psswrd);
         return ResponseEntity.ok(issueLoginToken(loginInfo.get("login")));
     }
     @Modifying
     @GetMapping("/remove")
-    public ResponseEntity<HashMap> removeUUIDFromUser(@RequestParam ("user") String user, @RequestParam ("systemUUID") String uuid){
+    public ResponseEntity<HashMap> removeUUIDFromUser(@AuthenticationPrincipal Jwt jwt, @RequestParam ("user") String user, @RequestParam ("systemUUID") String uuid){
+        if (user == null || jwt == null) return ResponseEntity.status(401).build();
+        if (user.trim().isEmpty() || !jwt.getSubject().equals(user)) return ResponseEntity.status(401).build();
+        if (!uer.existsByLogin(user)) return ResponseEntity.status(409).build();
+
         UserEntity ue = uer.getUserEntityByLogin(user);
         HashMap<String,Boolean> hm = new HashMap<>();
         if (ser.existsByUUID(uuid) && ue.getSystemsInPossession().contains(uuid)){

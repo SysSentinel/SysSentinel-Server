@@ -1,7 +1,5 @@
 package com.bolota.syssentinel.Service;
 
-import com.bolota.syssentinel.Entities.DTOs.SystemEntityDTO;
-import com.bolota.syssentinel.Entities.SystemEntities.SystemEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SysSentinelService {

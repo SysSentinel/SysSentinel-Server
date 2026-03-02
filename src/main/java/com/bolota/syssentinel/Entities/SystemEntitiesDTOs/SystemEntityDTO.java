@@ -1,4 +1,4 @@
-package com.bolota.syssentinel.Entities.SystemEntities;
+package com.bolota.syssentinel.Entities.SystemEntitiesDTOs;
 import lombok.*;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
-public class SystemEntity {
+public class SystemEntityDTO {
     private String UUID;
     private String name;
     private String os;
@@ -16,5 +16,5 @@ public class SystemEntity {
     private String cpu;
     private List<String> gpu;
     private double memRamMax;
-    private SystemVolatileEntity systemVolatileEntity;
+    private SystemVolatileEntityDTO systemVolatileEntityDTO;
 }

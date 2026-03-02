@@ -1,6 +1,6 @@
-package com.bolota.syssentinel.Entities.DTOs;
+package com.bolota.syssentinel.Entities.SystemEntities;
 
-import com.bolota.syssentinel.Entities.SystemEntities.SystemVolatileEntity;
+import com.bolota.syssentinel.Entities.SystemEntitiesDTOs.SystemVolatileEntityDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import static com.bolota.syssentinel.Service.SysSentinelService.genJSON;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SystemVolatileEntityDTO {
+public class SystemVolatileEntityPersistent {
     @Id
     @Column(nullable=false, updatable=false)
     private String UUID;
@@ -24,7 +24,7 @@ public class SystemVolatileEntityDTO {
     @Lob
     private String systemProcessEntities;   // ArrayList<SystemProcessEntity>
 
-    public SystemVolatileEntityDTO(SystemVolatileEntity sve){
+    public SystemVolatileEntityPersistent(SystemVolatileEntityDTO sve){
         this.UUID = sve.getUUID();
         this.basicComputerInfo = genJSON(sve.getBasicComputerInfo());
         this.internetCurrentUsage = genJSON(sve.getInternetCurrentUsage());
