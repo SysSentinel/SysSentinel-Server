@@ -34,13 +34,14 @@ ___
     * `GET /api/metrics/systemVolatileInfo`
     * `POST /api/metrics/systemRegister`
   * [3) Endpoints de Usuário (Frontend → Servidor)](#3-endpoints-de-usuário-frontend--servidor)
-
     * `POST /api/user/login`
-      
+    * `POST /api/user/register`
+
 * [Tráfego JSON “fim a fim” (como o projeto implementa)](#tráfego-json-fim-a-fim-como-o-projeto-implementa)
 
   * [Fluxo do Agente (cliente) → Host](#fluxo-do-agente-cliente--host)
   * [Fluxo do Usuário (frontend) → Host](#fluxo-do-usuário-frontend--host)
+
 * [Frontend servido pelo servidor](#frontend-servido-pelo-servidor)
 * [Swagger / OpenAPI](#swagger--openapi)
     * `POST /api/user/register`
