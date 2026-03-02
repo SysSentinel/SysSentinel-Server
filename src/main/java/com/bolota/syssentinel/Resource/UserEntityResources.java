@@ -9,6 +9,5 @@ public interface UserEntityResources extends JpaRepository<UserEntity, Long> {
     boolean existsByLogin(String login);
     void deleteByLogin(String login);
     UserEntity getUserEntityByLogin(String login);
-
 }
     

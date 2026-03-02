@@ -28,9 +28,9 @@ public class SystemSecurity {
             File file = new File(filePath);
             String jwtToken;
             String registerKey;
-            System.out.println("Enter the Jwt Key !(spaces will be trimmed)! :");
+            System.out.println("Digite a key do JWT !(NÂO USE ESPAÇOS E NÃO DIVULGUE A KEY)! :");
             jwtToken = scanner.nextLine();
-            System.out.println("Enter the Register Key !(spaces will be trimmed)! :");
+            System.out.println("Digite a chave de registro !(NÃO USE ESPAÇOS E GARANTA QUE A CHAVE SEJA IDÊNTICA COM A DO CLIENTE)! :");
             registerKey = scanner.nextLine();
             try (FileWriter fw = new FileWriter(file)) {
                 fw.write("AuthKey=" + jwtToken.trim() + "\n");

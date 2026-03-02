@@ -49,29 +49,23 @@ public class HostToMetricsFrontendController {
 
     @GetMapping("/systems")
     public ResponseEntity<Page<SystemEntityDTO>> sendSystems(@AuthenticationPrincipal Jwt jwt, @RequestHeader("login") String login, @PageableDefault(size = 10) Pageable pageable){
-        if (jwt == null) return ResponseEntity.status(409).build();
-        if (login == null) return ResponseEntity.status(404).build();
+        if (jwt == null || login == null) return ResponseEntity.status(401).build();
         if (!jwt.getSubject().equals(login)) return ResponseEntity.status(401).build();
+        if (!uer.existsByLogin(login)) return ResponseEntity.status(401).build();
         ArrayList<String> systemsUUIDs = uer.getUserEntityByLogin(login).getSystemsInPossession();
-        System.out.println(systemsUUIDs);
         ArrayList<SystemEntityDTO> systems = new ArrayList<>();
         for(String uuids: systemsUUIDs){
             systems.add(ser.getByUUID(uuids));
         }
         return ResponseEntity.ok(toPage(systems,pageable));
     }
+
     @GetMapping("/systemVolatileInfo")
     public ResponseEntity<SystemVolatileEntityDTO> sendSystemVolatileInfo(@AuthenticationPrincipal Jwt jwt, @RequestHeader("login") String login, @RequestParam String uuid, @RequestParam(defaultValue = "cpuLoad,desc") String sort) throws JsonProcessingException {
-        System.out.println("teste 1");
-        if (jwt == null) return ResponseEntity.status(409).build();
-        System.out.println("teste 2");
-        if (login == null) return ResponseEntity.status(404).build();
-        System.out.println("teste 3");
+        if (jwt == null || login == null) return ResponseEntity.status(401).build();
         if (!jwt.getSubject().equals(login)) return ResponseEntity.status(401).build();
-        System.out.println("teste 4");
-        System.out.println(uuid);
         if (!sver.existsByUUID(uuid)) return ResponseEntity.status(404).build();
-        System.out.println("teste 5");
+        if (!uer.getUserEntityByLogin(login).getSystemsInPossession().contains(uuid)) return ResponseEntity.status(401).build();
         SystemVolatileEntityDTO svedto = sver.getByUUID(uuid);
         SystemProcessEntity[] arr = new ObjectMapper().readValue(svedto.getSystemProcessEntities(), SystemProcessEntity[].class);
         List<SystemProcessEntity> spel = new ArrayList<>(Arrays.asList(arr));
@@ -130,7 +124,7 @@ public class HostToMetricsFrontendController {
         if (!uer.existsByLogin(login)) return ResponseEntity.status(409).build();
         if (!jwt.getSubject().equals(login)) return ResponseEntity.status(401).build();
         if (!ser.existsByUUID(uuid)) return ResponseEntity.status(404).build();
-        System.out.println(uuid);
+        if (uer.getUserEntityByLogin(login).getSystemsInPossession().contains(uuid)) return ResponseEntity.ok().build();
         UserEntity ue = uer.getUserEntityByLogin(login);
         ue.addSystem(uuid);
         uer.save(ue);
@@ -139,7 +133,6 @@ public class HostToMetricsFrontendController {
     public static <T> Page<T> toPage(List<T> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), list.size());
-
         if (start > end) {
             return new PageImpl<>(List.of(), pageable, list.size());
         }

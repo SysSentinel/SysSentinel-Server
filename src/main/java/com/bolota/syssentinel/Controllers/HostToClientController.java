@@ -6,8 +6,8 @@ import com.bolota.syssentinel.Entities.SystemEntities.SystemEntity;
 import com.bolota.syssentinel.Entities.SystemEntities.SystemVolatileEntity;
 import com.bolota.syssentinel.Resource.SystemEntityResources;
 import com.bolota.syssentinel.Resource.SystemVolatileEntityResources;
-import io.swagger.v3.oas.annotations.headers.Header;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatusCode;
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.bolota.syssentinel.Security.SystemSecurity.getRegisterKey;
-
 @RequestMapping("/api/systems")
 @RestController
 public class HostToClientController {
@@ -40,9 +39,7 @@ public class HostToClientController {
 
     @PostMapping(value="/sysinfo", consumes="application/json")
     public ResponseEntity<HashMap> SysEntityHandler(@RequestHeader("JwtToken") String jwttoken,@RequestHeader("RegisterToken") String rgstrtoken, @RequestBody SystemEntity seNew){
-        System.out.println(seNew + "         " + jwttoken + rgstrtoken);
         if(seNew.getUUID().equals("null") && jwttoken.equals("null") && rgstrtoken.equals(getRegisterKey())){
-            System.out.println("teste 1");
             String UUID = genUUID();
             HashMap<String,String> map = new HashMap<>();
             map.put("UUID",UUID);
@@ -52,10 +49,7 @@ public class HostToClientController {
             return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
         }
         if(!seNew.getUUID().equals("null") && jwttoken.equals("null") && rgstrtoken.equals(getRegisterKey())){
-            System.out.println("teste 2");
-            System.out.println(seNew.getUUID());
             if (ser.existsByUUID(seNew.getUUID())){
-                System.out.println("teste 3");
                 HashMap<String,String> map = new HashMap<>();
                 map.put("UUID",seNew.getUUID());
                 map.put("token",issueAgentToken(seNew.getUUID()));
@@ -63,7 +57,6 @@ public class HostToClientController {
                 return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
             }
             else {
-                System.out.println("teste 4");
                 HashMap<String,String> map = new HashMap<>();
                 map.put("UUID",null);
                 map.put("token",null);
@@ -71,20 +64,13 @@ public class HostToClientController {
             }
         }
         if (seNew.getUUID().equals("null") && !jwttoken.equals("null") && rgstrtoken.equals("null")) {
-            System.out.println("teste 5");
             HashMap<String, String> map = new HashMap<>();
             map.put("UUID", null);
             map.put("token", null);
             return new ResponseEntity<>(map, HttpStatusCode.valueOf(404));
         }
-
         try{
             if (seNew.getUUID().equals(jwtDecoder.decode(jwttoken).getSubject())){
-                System.out.println("teste 6");
-                if (ser.existsByUUID(seNew.getUUID())){
-                    //ser.deleteByUUID(seNew.getUUID());
-                }
-                //ser.save(new SystemEntityDTO(seNew));
                 HashMap<String,String> map = new HashMap<>();
                 map.put("UUID",seNew.getUUID());
                 map.put("token",jwttoken);
@@ -92,7 +78,6 @@ public class HostToClientController {
                 return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
             }
             else {
-                System.out.println("teste 7");
                 HashMap<String,String> map = new HashMap<>();
                 map.put("UUID",null);
                 map.put("token",null);
@@ -110,7 +95,7 @@ public class HostToClientController {
     @PostMapping(value="/sysinfovolatile", consumes="application/json")
     public ResponseEntity<Void> SysVolatileHandler(@AuthenticationPrincipal Jwt jwt, @RequestBody SystemVolatileEntity sveNew){
         if (jwt == null){
-            return ResponseEntity.status(409).build();
+            return ResponseEntity.status(401).build();
         }
         String jwtSub = jwt.getSubject();
         if (sveNew.getUUID() == null) return  ResponseEntity.status(403).build();
@@ -129,7 +114,19 @@ public class HostToClientController {
         sver.save(new SystemVolatileEntityDTO(sveNew));
         return ResponseEntity.status(200).build();
     }
-
+    @GetMapping("/updateAuth")
+    public ResponseEntity<HashMap> updateAuth(@RequestHeader ("JwtToken") String jwtTkn, @RequestHeader ("RegisterToken") String regTkn, @RequestHeader ("sysUUID") String uuid){
+        if ((jwtTkn.equals("null")) && regTkn.equals(getRegisterKey())){
+            HashMap<String,String> map = new HashMap<>();
+            map.put("UUID",uuid);
+            map.put("token",issueAgentToken(uuid));
+            return new ResponseEntity<>(map,HttpStatusCode.valueOf(200));
+        }
+        HashMap<String,String> map = new HashMap<>();
+        map.put("UUID",uuid);
+        map.put("token",null);
+        return new ResponseEntity<>(map,HttpStatusCode.valueOf(200));
+    }
     public String issueAgentToken(String uuid) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -154,19 +151,4 @@ public class HostToClientController {
         }while (ser.existsByUUID(s.toString()));
         return s.toString();
     }
-    @GetMapping("/updateAuth")
-    public ResponseEntity<HashMap> updateAuth(@RequestHeader ("JwtToken") String jwtTkn, @RequestHeader ("RegisterToken") String regTkn, @RequestHeader ("sysUUID") String uuid){
-        System.out.println(jwtTkn + "   " + regTkn + "   " + uuid +  "   ");
-        if ((jwtTkn.equals("null")) && regTkn.equals(getRegisterKey())){
-            HashMap<String,String> map = new HashMap<>();
-            map.put("UUID",uuid);
-            map.put("token",issueAgentToken(uuid));
-            return new ResponseEntity<>(map,HttpStatusCode.valueOf(200));
-        }
-        HashMap<String,String> map = new HashMap<>();
-        map.put("UUID",uuid);
-        map.put("token",null);
-        return new ResponseEntity<>(map,HttpStatusCode.valueOf(200));
-    }
-
 }

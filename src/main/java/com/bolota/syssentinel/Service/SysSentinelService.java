@@ -14,7 +14,4 @@ public class SysSentinelService {
             throw new RuntimeException(e);
         }
     }
-    public static SystemEntityDTO sysToSysDTO(SystemEntity se){
-        return new SystemEntityDTO(se.getUUID(),se.getName(),se.getOs(),se.getHost(),se.getCpu(),se.getGpu(),se.getMemRamMax());
-    }
 }
