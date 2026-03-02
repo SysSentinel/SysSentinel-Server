@@ -2,8 +2,8 @@
 
 # SysSentinel — Server (Host)
 
-Servidor **Spring Boot 3** do projeto SysSentinel.
-
+O SysSentinel Server é a aplicação central responsável por receber, validar e persistir as informações enviadas pelos agentes monitorados.
+Ele expõe endpoints REST protegidos por JWT para autenticação, gerenciamento de usuários e consulta de métricas, atuando como núcleo de controle e agregação do sistema.
 ___
 ## Função
 
