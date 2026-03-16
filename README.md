@@ -503,7 +503,7 @@ Regras:
 
 ---
 
-#### `GET /api/user/remove
+#### `GET /api/user/remove`
 
 Controller: `HostToUserFrontendController.removeUUIDFromUser`
 
